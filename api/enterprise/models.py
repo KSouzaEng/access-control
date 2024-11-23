@@ -8,4 +8,6 @@ class Enterprise(Base):
     name = Column(String, unique=True, index=True)
     contact = Column(String, unique=True, index=True)
     email = Column(String)
-    plan = Column(String, unique=True, index=True)
+    owner_id = Column(Integer, ForeignKey("plans.id"))
+
+    owner = relationship("Plan")

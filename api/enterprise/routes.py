@@ -4,13 +4,13 @@ from fastapi.security import OAuth2PasswordRequestForm
 from core.database import get_db
 from auth.auth import create_access_token, get_password_hash, verify_password, get_current_user
 from enterprise.models import Enterprise
-from enterprise.schema import EnterpriseBase,EnterpriseCreate,EnterpriseResponse
+from enterprise.schema import EnterpriseBase,EnterpriseCreate,EnterpriseResponse,EnterpriseUpdate
 
 enterpriseRouter = APIRouter()
 
 @enterpriseRouter.post("/register", response_model=EnterpriseResponse, dependencies=[Depends(get_current_user)])
 def register_enterprise(enterprise: EnterpriseCreate, db: Session = Depends(get_db)):
-    db_enterprise = Enterprise(name=enterprise.name, contact=enterprise.contact, email=enterprise.email,plan=enterprise.plan)
+    db_enterprise = Enterprise(name=enterprise.name, contact=enterprise.contact, email=enterprise.email,owner_id=enterprise.owner_id)
     db.add(db_enterprise)
     db.commit()
     db.refresh(db_enterprise)
@@ -33,22 +33,24 @@ def delete_enterprise(id: int,db: Session = Depends(get_db)):
    db.commit()
    return {"msg": "Enterprise deleted"}
 
-# @router.put("/users/{user_id}", response_model=UserOut)
-# def update_user(user_id: int, user: UserUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-#     db_user = db.query(User).filter(User.id == user_id).first()
+@enterpriseRouter.put("/{id}", response_model=EnterpriseResponse)
+def update_user(id: int, enterprise: EnterpriseUpdate, db: Session = Depends(get_db), current_user: Enterprise = Depends(get_current_user)):
+    db_enterprise = db.query(Enterprise).filter(Enterprise.id == id).first()
     
-#     if not db_user:
-#         raise HTTPException(status_code=404, detail="User not found")
+    if not db_enterprise:
+        raise HTTPException(status_code=404, detail="enterprise not found")
     
-#     # Atualizando os campos recebidos
-#     if user.username:
-#         db_user.username = user.username
-#     if user.email:
-#         db_user.email = user.email
-#     if user.password:
-#         db_user.hashed_password = get_password_hash(user.password)
+    # Atualizando os campos recebidos
+    if enterprise.name:
+        db_enterprise.name = enterprise.name
+    if enterprise.contact:
+        db_enterprise.contact = enterprise.contact
+    if enterprise.email:
+        db_enterprise.email = enterprise.email
+    if enterprise.plan:
+        db_enterprise.plan = enterprise.plan
     
-#     db.commit()
-#     db.refresh(db_user)
-#     return db_user 
+    db.commit()
+    db.refresh(db_enterprise)
+    return db_enterprise 
 
