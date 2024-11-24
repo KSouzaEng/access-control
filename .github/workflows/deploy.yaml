@@ -20,7 +20,7 @@ jobs:
 
     - name: Deploy para EC2
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@EC2_IP << 'EOF'
+        ssh -o StrictHostKeyChecking=no ubuntu@3.17.172.7 << 'EOF'
           cd /home/ubuntu/seu-repositorio || {
             echo "Clonando repositório pela primeira vez..."
             git clone https://github.com/seu-usuario/seu-repositorio.git
