@@ -16,11 +16,11 @@ jobs:
     - name: Configurar acesso SSH
       uses: webfactory/ssh-agent@v0.5.3
       with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
     - name: Fazer deploy na instância EC2
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@SEU_IP_EC2 << EOF
+        ssh -o StrictHostKeyChecking=no ubuntu@IP_EC2 << EOF
           cd /home/ubuntu/access-control
           git pull origin main
           source venv/bin/activate
