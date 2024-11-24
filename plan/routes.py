@@ -15,6 +15,7 @@ def register_enterprise(plan: PlanCreate, db: Session = Depends(get_db)):
     db.refresh(db_plan)
     return db_plan
 
+#get list plans
 @plan_router.get("/", dependencies=[Depends(get_current_user)])
 def list_plans(db: Session = Depends(get_db)):
     return db.query(Plan).all()
