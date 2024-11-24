@@ -1,36 +1,38 @@
-name: Deploy FastAPI to AWS EC2
+name: Deploy FastAPI to EC2
 
 on:
   push:
     branches:
-    - main # O deploy será disparado em pushs na branch main
+    - main # Altere para o branch que deseja monitorar
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Checkout do repositório
-    - name: Checkout Code
+    - name: Checkout código
       uses: actions/checkout@v3
 
-    # 2. Configuração de acesso SSH ao EC2
-    - name: Setup SSH
+    - name: Configurar chave SSH
       uses: webfactory/ssh-agent@v0.5.3
       with:
-        ssh-private-key: ${{ secrets.EC2_SSH_KEY }} # Configure essa chave em Settings > Secrets do GitHub
+        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
-    # 3. Deploy do código para o EC2
-    - name: Deploy to EC2
+    - name: Deploy para EC2
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_IP }} << 'EOF'
-          cd /var/www/access-control  # Mude para o diretório do seu app
+        ssh -o StrictHostKeyChecking=no ubuntu@EC2_IP << 'EOF'
+          cd /home/ubuntu/seu-repositorio || {
+            echo "Clonando repositório pela primeira vez..."
+            git clone https://github.com/seu-usuario/seu-repositorio.git
+            cd seu-repositorio
+            python3 -m venv venv
+            source venv/bin/activate
+            pip install -r requirements.txt
+          }
+          echo "Atualizando repositório..."
+          cd /home/ubuntu/seu-repositorio
           git pull origin main
           source venv/bin/activate
           pip install -r requirements.txt
-          # Reinicie o servidor ou o processo (exemplo: gunicorn, uvicorn, etc.)
-          sudo systemctl restart fastapi.service
+          sudo systemctl restart fastapi
         EOF
-    - name: Debug SSH
-      run: |
-        ssh -v -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_IP }} 'echo "SSH successful"'
