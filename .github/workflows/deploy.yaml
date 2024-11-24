@@ -23,8 +23,8 @@ jobs:
     # 3. Deploy do código para o EC2
     - name: Deploy to EC2
       run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_IP }} << 'EOF'
-          cd /var/www/access-control-api
+        ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_IP }} << 'EOF'
+          cd /var/www/access-control-api  # Mude para o diretório do seu app
           git pull origin main
           source venv/bin/activate
           pip install -r requirements.txt
