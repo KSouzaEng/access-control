@@ -13,6 +13,15 @@ jobs:
     # 1. Checkout do repositório
     - name: Checkout Code
       uses: actions/checkout@v3
+    # Configuração do Node.js versão 16
+    - name: Set up Node.js 16
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+    # Instalar dependências (caso precise)
+    - name: Install dependencies
+      run: |
+        npm install
 
     # 2. Configuração de acesso SSH ao EC2
     - name: Setup SSH
