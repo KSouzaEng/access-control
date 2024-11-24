@@ -23,7 +23,7 @@ jobs:
     # 3. Deploy do código para o EC2
     - name: Deploy to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_IP }} << 'EOF'
+        ssh -t -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_IP }} << 'EOF'
           cd /var/www/access-control-api  # Mude para o diretório do seu app
           git pull origin main
           source venv/bin/activate
@@ -31,3 +31,6 @@ jobs:
           # Reinicie o servidor ou o processo (exemplo: gunicorn, uvicorn, etc.)
           sudo systemctl restart fastapi.service
         EOF
+    - name: Debug SSH
+      run: |
+        ssh -v -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_IP }} 'echo "SSH successful"'
