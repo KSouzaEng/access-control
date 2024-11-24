@@ -8,11 +8,11 @@ on:
       uses: actions/checkout@v3
       name: Copy files with SSH
       uses: easingthemes/ssh-deploy@main
-        env:
-          SSH_PRIVATE_KEY: ${{secrets.EC2_SSH_KEY}}
-          SOURCE: ./
-          REMOTE_HOST: ec2-18-216-243-7.us-east-2.compute.amazonaws.com
-          REMOTE_USER: ec2-user
-          TARGET: /home/ec2-use
-          EXCLUDE: "/dist/, /node_modules/, **.env, rebuild_app.sh, watcher.sh"
+      env:
+        SSH_PRIVATE_KEY: ${{secrets.EC2_SSH_KEY}}
+        SOURCE: ./
+        REMOTE_HOST: ec2-18-216-243-7.us-east-2.compute.amazonaws.com
+        REMOTE_USER: ec2-user
+        TARGET: /home/ec2-use
+        EXCLUDE: "/dist/, /node_modules/, **.env, rebuild_app.sh, watcher.sh"
 
