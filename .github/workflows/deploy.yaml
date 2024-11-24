@@ -1,36 +1,29 @@
-name: Deploy FastAPI to AWS EC2
+name: Deploy FastAPI
 
 on:
   push:
     branches:
-    - main # O deploy será disparado em pushs na branch main
+    - main # Ou o branch principal do seu projeto
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Checkout do repositório
-    - name: Checkout Code
+    - name: Checkout código
       uses: actions/checkout@v3
 
-    # 2. Configuração de acesso SSH ao EC2
-    - name: Setup SSH
+    - name: Configurar acesso SSH
       uses: webfactory/ssh-agent@v0.5.3
       with:
-        ssh-private-key: ${{ secrets.EC2_SSH_KEY }} # Configure essa chave em Settings > Secrets do GitHub
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    # 3. Deploy do código para o EC2
-    - name: Deploy to EC2
+    - name: Fazer deploy na instância EC2
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_IP }} << 'EOF'
-          cd /var/www/access-control  # Mude para o diretório do seu app
+        ssh -o StrictHostKeyChecking=no ubuntu@SEU_IP_EC2 << EOF
+          cd /home/ubuntu/access-control
           git pull origin main
           source venv/bin/activate
           pip install -r requirements.txt
-          # Reinicie o servidor ou o processo (exemplo: gunicorn, uvicorn, etc.)
-          sudo systemctl restart fastapi.service
+          sudo systemctl restart fastapi
         EOF
-    - name: Debug SSH
-      run: |
-        ssh -v -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_IP }} 'echo "SSH successful"'
